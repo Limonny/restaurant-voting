@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class Restaurant extends BaseEntity {
 
     @Column(name = "name", nullable = false)

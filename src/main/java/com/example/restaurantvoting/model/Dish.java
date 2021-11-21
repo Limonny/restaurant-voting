@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"restaurant"})
+@ToString(callSuper = true, exclude = {"restaurant"})
 public class Dish extends BaseEntity {
 
     @Column(name = "description", nullable = false)
