@@ -1,12 +1,10 @@
 package com.example.restaurantvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -22,7 +20,7 @@ public class Dish extends BaseEntity {
 
     @Column(name = "description", nullable = false)
     @NotBlank
-    @Max(200)
+    @Size(max = 200)
     private String description;
 
     @Column (name = "price", nullable = false)
@@ -36,5 +34,6 @@ public class Dish extends BaseEntity {
 
     @Column(name = "date_entry", nullable = false)
     @NotNull
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate date;
 }

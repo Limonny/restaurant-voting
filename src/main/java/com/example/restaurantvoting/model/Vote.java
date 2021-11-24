@@ -1,5 +1,6 @@
 package com.example.restaurantvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,5 +28,6 @@ public class Vote extends BaseEntity {
 
     @Column(name = "date_entry", nullable = false)
     @NotNull
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate date;
 }
