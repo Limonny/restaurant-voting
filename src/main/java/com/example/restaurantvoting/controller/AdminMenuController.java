@@ -38,7 +38,7 @@ public class AdminMenuController {
 
     @GetMapping("/{dishId}")
     public ResponseEntity<Dish> getDishById(@PathVariable Long restaurantId, @PathVariable Long dishId) {
-        Dish dish = dishRepository.getDishByRestaurantAndId(restaurantId, dishId);
+        Dish dish = dishRepository.getByRestaurantAndId(restaurantId, dishId);
 
         if (dish == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

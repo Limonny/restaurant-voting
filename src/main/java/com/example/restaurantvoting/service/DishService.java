@@ -32,7 +32,7 @@ public class DishService {
 
         Long dishId = dish.getId();
         if (dishId != null) {
-            Dish d = dishRepository.getDishByRestaurantAndId(restaurantId, dishId);
+            Dish d = dishRepository.getByRestaurantAndId(restaurantId, dishId);
             if (d == null) {
                 throw new IdValidationException(
                         HttpStatus.UNPROCESSABLE_ENTITY,

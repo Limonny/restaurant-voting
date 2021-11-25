@@ -18,7 +18,7 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
     List<Dish> getAllByRestaurantAndDate(Long restaurantId, LocalDate date);
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id=:dishId")
-    Dish getDishByRestaurantAndId(Long restaurantId, Long dishId);
+    Dish getByRestaurantAndId(Long restaurantId, Long dishId);
 
     @Modifying
     @Query("DELETE FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id=:dishId")
