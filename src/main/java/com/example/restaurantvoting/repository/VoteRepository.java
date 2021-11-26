@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Transactional(readOnly = true)
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
-    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.date=:date")
-    Vote getByUserAndDate(Long userId, LocalDate date);
+    @Query("SELECT v FROM Vote v WHERE v.user.email=:email AND v.date=:date")
+    Vote getByUserAndDate(String email, LocalDate date);
 
     @Modifying
     @Query("DELETE FROM Vote v WHERE v.id=:id")

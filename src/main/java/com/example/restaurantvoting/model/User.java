@@ -3,9 +3,7 @@ package com.example.restaurantvoting.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -27,7 +25,15 @@ public class User extends BaseEntity {
 
     @Column(name = "password", nullable = false)
     @NotBlank
-    @Size(min = 4, max = 32)
+    @Size(min = 4, max = 128)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status;
 }
