@@ -4,6 +4,7 @@ import com.example.restaurantvoting.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
+                .antMatchers(HttpMethod.POST, "/api/profile").anonymous()
                 .antMatchers("/api/**").hasRole(Role.USER.name())
                 .anyRequest()
                 .authenticated()
