@@ -12,6 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Modifying
-    @Query("DELETE FROM Restaurant r WHERE r.id=:id")
-    Integer delete(Long id);
+    @Query("DELETE FROM Restaurant r WHERE r.id=:restaurantId")
+    Integer removeById(Long restaurantId);
 }

@@ -1,7 +1,7 @@
-package com.example.restaurantvoting.controller;
+package com.example.restaurantvoting.controller.restaurant;
 
 import com.example.restaurantvoting.model.Restaurant;
-import com.example.restaurantvoting.repository.RestaurantRepository;
+import com.example.restaurantvoting.service.RestaurantService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +17,18 @@ import java.util.List;
 @AllArgsConstructor
 public class RestaurantController {
 
-    private final RestaurantRepository restaurantRepository;
+    private final RestaurantService restaurantService;
 
     @GetMapping
     public ResponseEntity<List<Restaurant>> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantRepository.findAll();
-
-        if (restaurants.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<Restaurant> restaurants = restaurantService.getAll();
 
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
     }
 
     @GetMapping("/{restaurantId}")
     public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
-
-        if (restaurant == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Restaurant restaurant = restaurantService.getById(restaurantId);
 
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }

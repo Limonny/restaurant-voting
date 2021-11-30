@@ -1,6 +1,6 @@
 package com.example.restaurantvoting.security;
 
-import com.example.restaurantvoting.model.User;
+import com.example.restaurantvoting.model.user.User;
 import com.example.restaurantvoting.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,7 @@
 package com.example.restaurantvoting.security;
 
-import com.example.restaurantvoting.model.Status;
-import com.example.restaurantvoting.model.User;
+import com.example.restaurantvoting.model.user.Status;
+import com.example.restaurantvoting.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,5 +1,6 @@
 package com.example.restaurantvoting.model;
 
+import com.example.restaurantvoting.model.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 

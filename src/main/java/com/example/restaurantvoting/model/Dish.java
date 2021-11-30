@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "dish", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"date_entry", "restaurant_id", "description"}, name = "dish_unique_date_restaurant_description_idx")
+        @UniqueConstraint(columnNames = {"date_entry", "restaurant_id", "name"}, name = "dish_unique_date_restaurant_description_idx")
 })
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,10 +18,10 @@ import java.time.LocalDate;
 @ToString(callSuper = true, exclude = {"restaurant"})
 public class Dish extends BaseEntity {
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "name", nullable = false)
     @NotBlank
     @Size(max = 200)
-    private String description;
+    private String name;
 
     @Column (name = "price", nullable = false)
     @NotNull

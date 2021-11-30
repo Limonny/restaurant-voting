@@ -5,13 +5,15 @@ import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.MESSAGE;
+
 @Getter
-public class IdValidationException extends ResponseStatusException {
+public class EntityValidationException extends ResponseStatusException {
 
     private final ErrorAttributeOptions options;
 
-    public IdValidationException(HttpStatus status, String message, ErrorAttributeOptions options) {
+    public EntityValidationException(HttpStatus status, String message) {
         super(status, message);
-        this.options = options;
+        this.options = ErrorAttributeOptions.of(MESSAGE);
     }
 }

@@ -22,5 +22,5 @@ public interface DishRepository extends JpaRepository<Dish, Long> {
 
     @Modifying
     @Query("DELETE FROM Dish d WHERE d.restaurant.id=:restaurantId AND d.id=:dishId")
-    Integer delete(Long restaurantId, Long dishId);
+    Integer removeByRestaurantAndId(Long restaurantId, Long dishId);
 }
