@@ -9,6 +9,8 @@ import com.example.restaurantvoting.repository.RestaurantRepository;
 import com.example.restaurantvoting.to.DishInputTO;
 import com.example.restaurantvoting.to.DishOutputTO;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class DishService {
     private final DishRepository dishRepository;
     private final RestaurantRepository restaurantRepository;
 
+    @Cacheable(value = "menu")
     public List<DishOutputTO> getAllByDate(Long restaurantId, LocalDate date) {
         checkIfRestaurantPresent(restaurantId);
 
@@ -50,6 +53,7 @@ public class DishService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "menu")
     public DishOutputTO getById(Long restaurantId, Long dishId) {
         checkIfRestaurantPresent(restaurantId);
 
@@ -69,6 +73,7 @@ public class DishService {
                 dish.getDate());
     }
 
+    @CacheEvict(value = "menu", allEntries = true)
     public DishOutputTO create(Long restaurantId, DishInputTO dishInputTO) {
         Restaurant restaurant = checkIfRestaurantPresentAndGet(restaurantId);
 
@@ -87,6 +92,7 @@ public class DishService {
     }
 
     @Transactional
+    @CacheEvict(value = "menu", allEntries = true)
     public DishOutputTO update(Long restaurantId, DishInputTO dishInputTO, Long dishId) {
         checkIfRestaurantPresent(restaurantId);
 
@@ -117,6 +123,7 @@ public class DishService {
         );
     }
 
+    @CacheEvict(value = "menu", allEntries = true)
     public void deleteById(Long restaurantId, Long dishId) {
         checkIfRestaurantPresent(restaurantId);
 

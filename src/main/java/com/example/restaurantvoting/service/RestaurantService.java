@@ -5,6 +5,8 @@ import com.example.restaurantvoting.model.Restaurant;
 import com.example.restaurantvoting.repository.RestaurantRepository;
 import com.example.restaurantvoting.to.RestaurantInputTO;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
+    @Cacheable(value = "restaurants")
     public List<Restaurant> getAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
 
@@ -29,10 +32,12 @@ public class RestaurantService {
         return restaurants;
     }
 
+    @Cacheable(value = "restaurants")
     public Restaurant getById(Long restaurantId) {
         return checkIfRestaurantPresentAndGet(restaurantId);
     }
 
+    @CacheEvict(value = "restaurants", allEntries = true)
     public Restaurant create(RestaurantInputTO restaurantInputTO) {
         return restaurantRepository.save(new Restaurant(
                 restaurantInputTO.getName(),
@@ -40,6 +45,7 @@ public class RestaurantService {
     }
 
     @Transactional
+    @CacheEvict(value = "restaurants", allEntries = true)
     public Restaurant update(Long restaurantId, RestaurantInputTO restaurantInputTO) {
         Restaurant restaurant = checkIfRestaurantPresentAndGet(restaurantId);
 
@@ -49,6 +55,7 @@ public class RestaurantService {
         return restaurant;
     }
 
+    @CacheEvict(value = "restaurants", allEntries = true)
     public void deleteById(Long restaurantId) {
         Integer modificationCount = restaurantRepository.removeById(restaurantId);
 
