@@ -2,6 +2,8 @@ package com.example.restaurantvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -28,7 +30,8 @@ public class Dish extends BaseEntity {
     @Min(0)
     private Integer price;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne()
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
