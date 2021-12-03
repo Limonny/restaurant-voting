@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AbstractTest {
+public abstract class AbstractTest {
 
     @Autowired
     private MockMvc mockMvc;

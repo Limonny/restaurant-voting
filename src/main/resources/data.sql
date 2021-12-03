@@ -20,5 +20,5 @@ VALUES ('Big Mac', 10, 1, CURRENT_DATE),
        ('Classic Fries', 10, 2, CURRENT_DATE);
 
 INSERT INTO vote (restaurant_id, user_id, date_entry)
-VALUES (2, 1, CURRENT_DATE),
-       (1, 3, CURRENT_DATE);
+VALUES (2, 1, '2021-01-01'),
+       (1, 3, '2021-01-01');
