@@ -1,11 +1,14 @@
 package com.example.restaurantvoting.to;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class VoteOutputTO {
 
     Long id;

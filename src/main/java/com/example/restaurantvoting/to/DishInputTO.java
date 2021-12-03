@@ -1,13 +1,16 @@
 package com.example.restaurantvoting.to;
 
-import lombok.Value;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Value
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DishInputTO {
 
     @NotBlank
