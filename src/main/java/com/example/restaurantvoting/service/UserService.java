@@ -1,6 +1,7 @@
 package com.example.restaurantvoting.service;
 
 import com.example.restaurantvoting.exception.EntityNotFoundException;
+import com.example.restaurantvoting.exception.EntityValidationException;
 import com.example.restaurantvoting.exception.UserAlreadyExistException;
 import com.example.restaurantvoting.model.user.Role;
 import com.example.restaurantvoting.model.user.Status;
@@ -58,7 +59,14 @@ public class UserService {
     public void setStatus(Long userId, Boolean enabled) {
         User user = checkIfUserPresentAndGet(userId);
 
-        user.setStatus(enabled ? Status.ACTIVE : Status.BANNED);
+        if (user.getRole().equals(Role.USER)) {
+            user.setStatus(enabled ? Status.ACTIVE : Status.BANNED);
+        }
+        else {
+            throw new EntityValidationException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Status cannot be changed for user with Admin role");
+        }
     }
 
     private User checkIfUserPresentAndGet(Long userId) {

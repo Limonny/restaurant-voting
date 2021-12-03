@@ -45,7 +45,7 @@ public class AdminMenuController {
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/admin/restaurants/{restaurantId}/menu" + "/{id}")
-                .buildAndExpand(dishOutputTO.getId()).toUri();
+                .buildAndExpand(restaurantId, dishOutputTO.getId()).toUri();
 
         return ResponseEntity.created(uriOfNewResource).body(dishOutputTO);
     }
