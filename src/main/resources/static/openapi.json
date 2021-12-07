@@ -1,0 +1,754 @@
+openapi: 3.0.1
+info:
+  description: "Restaurant voting API for deciding where to have lunch."
+  version: "1.0"
+  title: "Restaurant Voting"
+  contact:
+    email: "limonny7@gmail.com"
+servers:
+  - url: http://localhost:8080/
+tags:
+- name: "restaurant"
+- name: "menu"
+- name: "vote"
+- name: "profile"
+- name: "restaurant-admin"
+- name: "menu-admin"
+- name: "profile-admin"
+paths:
+  /api/restaurants:
+    get:
+      tags:
+        - "restaurant"
+      summary: "Get list of all available restaurants"
+      operationId: getAllRestaurants
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: "No restaurants found"
+      security:
+        - basicAuth: []
+  /api/restaurants/{restaurantId}:
+    get:
+      tags:
+        - "restaurant"
+      summary: "Get restaurant by ID"
+      operationId: getRestaurantById
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+  /api/restaurants/{restaurantId}/menu:
+    get:
+      tags:
+        - "menu"
+      summary: "Get today's menu for specific restaurant"
+      operationId: getAllDishes
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Today's menu is empty or restaurant not found"
+      security:
+        - basicAuth: []
+  /api/restaurants/{restaurantId}/menu/{dishId}:
+    get:
+      tags:
+        - "menu"
+      summary: "Get dish by ID"
+      operationId: getDishById
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Dish or restaurant not found"
+      security:
+        - basicAuth: []
+  /api/vote:
+    get:
+      tags:
+        - "vote"
+      summary: "Get vote history for authenticated user by date"
+      description: "Date is not required, if not specified, the current date will be used by default. Date must be in format dd.MM.yyyy"
+      operationId: getVoteByDate
+      parameters:
+        - name: "date"
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "01.01.2021"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+        '404':
+          description: "Vote not found"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - "vote"
+      summary: "Submit new vote for specific restaurant"
+      description: "If vote already been submitted today, it can be changed via PUT request prior 11AM MSK"
+      operationId: createVote
+      parameters:
+        - name: restaurantId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+        '404':
+          description: "Restaurant not found"
+        '422':
+          description: "Vote already been submited today"
+      security:
+        - basicAuth: []
+    put:
+      tags:
+        - "vote"
+      summary: "Change submitted vote"
+      description: "Change already submitted vote, if it is not too late. If vote is not submitted yet, use POST request instead"
+      operationId: updateVote
+      parameters:
+        - name: "restaurantId"
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+        '404':
+          description: "Restaurant not found"
+        '422':
+          description: "User not voted today or it is too late to change vote"
+      security:
+        - basicAuth: []
+  /api/vote/total/{restaurantId}:
+    get:
+      tags:
+        - "vote"
+      summary: "Get total number of votes for specific restaurant by date"
+      description: "Date is not required, if not specified, the current date will be used by default. Date must be in format dd.MM.yyyy"
+      operationId: getTotalVotesForRestaurantByDate
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "01.01.2021"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                example: 7340
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+  /api/profile:
+    get:
+      tags:
+        - "profile"
+      summary: "Get info about authenticated user"
+      operationId: getProfileInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - "profile"
+      summary: "New user register"
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+        required: true
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '422':
+          description: "Email already taken"
+  /api/admin/restaurants:
+    get:
+      tags:
+        - "restaurant-admin"
+      summary: "Get list of all restaurants"
+      operationId: getAllRestaurants_admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: "No restaurants found"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - "restaurant-admin"
+      summary: "Add new restaurant"
+      operationId: createRestaurant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantInput'
+        required: true
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+      security:
+        - basicAuth: []
+  /api/admin/restaurants/{restaurantId}:
+    get:
+      tags:
+        - "restaurant-admin"
+      summary: "Get restaurant by ID"
+      operationId: getRestaurantById_admin
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+    put:
+      tags:
+        - "restaurant-admin"
+      summary: "Update restaurant by ID"
+      operationId: updateRestaurant
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantInput'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+    delete:
+      tags:
+        - "restaurant-admin"
+      summary: "Delete restaurant by ID"
+      operationId: deleteRestaurantById
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 2
+      responses:
+        '204':
+          description: "Successfully deleted"
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+  /api/admin/restaurants/{restaurantId}/menu:
+    get:
+      tags:
+        - "menu-admin"
+      summary: "Get menu for specific restaurant by date"
+      description: "Date is not required, if not specified, the current date will be used by default. Date must be in format dd.MM.yyyy"
+      operationId: getAllDishesByDate
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Menu is empty or restaurant not found"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - "menu-admin"
+      summary: "Add new dish to today's menu for specific restaurant"
+      operationId: createDish
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishInput'
+        required: true
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Restaurant not found"
+      security:
+        - basicAuth: []
+  /api/admin/restaurants/{restaurantId}/menu/{dishId}:
+    get:
+      tags:
+        - "menu-admin"
+      summary: "Get dish by ID"
+      operationId: getDishById_admin
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Dish or restaurant not found"
+      security:
+        - basicAuth: []
+    put:
+      tags:
+        - "menu-admin"
+      summary: "Update dish by ID"
+      operationId: updateDish
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishInput'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '404':
+          description: "Dish or restaurant not found"
+        '422':
+          description: "Dish doesn't belong to restaurant"
+      security:
+        - basicAuth: []
+    delete:
+      tags:
+        - "menu-admin"
+      summary: "Delete dish by ID"
+      operationId: deleteDishById
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 4
+      responses:
+        '204':
+          description: "Successfully deleted"
+        '404':
+          description: "Dish or restaurant not found"
+      security:
+        - basicAuth: []
+  /api/admin/users:
+    get:
+      tags:
+        - "profile-admin"
+      summary: "Get list of all users"
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      security:
+        - basicAuth: []
+  /api/admin/users/{userId}:
+    get:
+      tags:
+        - "profile-admin"
+      summary: "Get user by ID"
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: "User not found"
+      security:
+        - basicAuth: []
+    patch:
+      tags:
+        - "profile-admin"
+      summary: "Set status for specific user"
+      operationId: updateUserStatus
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 3
+        - name: enabled
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '204':
+          description: "Status set successfully"
+        '422':
+          description: "Status cannot be changed for this user"
+      security:
+        - basicAuth: []
+components:
+  schemas:
+    RestaurantInput:
+      required:
+        - address
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 100
+          minLength: 2
+          type: string
+          example: "KFC"
+        address:
+          maxLength: 100
+          minLength: 5
+          type: string
+          example: "1027 8th Ave S N, Nashville, TN 37208, United States"
+    Restaurant:
+      required:
+        - address
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 2
+        name:
+          maxLength: 100
+          minLength: 2
+          type: string
+          example: "Burger King"
+        address:
+          maxLength: 100
+          minLength: 5
+          type: string
+          example: "1501 Charlotte Ave, Nashville, TN 37203, United States"
+    DishInput:
+      required:
+        - name
+        - price
+      type: object
+      properties:
+        name:
+          maxLength: 200
+          minLength: 0
+          type: string
+          example: "Delicious Burger"
+        price:
+          minimum: 0
+          type: integer
+          format: int32
+          example: 600
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 731
+        name:
+          type: string
+          example: "Quarter Pounder"
+        price:
+          type: integer
+          format: int32
+          example: 430
+        restaurantId:
+          type: integer
+          format: int64
+          example: 1
+        date:
+          type: string
+          format: date
+          example: "20.10.2020"
+    Vote:
+      type: object
+      properties:
+        voteId:
+          type: integer
+          format: int64
+          example: 6610
+        restaurantId:
+          type: integer
+          format: int64
+          example: 7
+        userEmail:
+          type: string
+          example: "user@mail.com"
+        date:
+          type: string
+          example: "23.03.2020"
+    UserInput:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          maxLength: 100
+          minLength: 0
+          type: string
+          example: "myemail@mail.com"
+        password:
+          maxLength: 32
+          minLength: 4
+          type: string
+          example: "f8lTZoq4"
+    User:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 37
+        email:
+          maxLength: 100
+          minLength: 0
+          type: string
+          example: "myemail@mail.com"
+        password:
+          maxLength: 128
+          minLength: 4
+          type: string
+          writeOnly: true
+        role:
+          type: string
+          enum:
+            - USER
+            - ADMIN
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - BANNED
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
