@@ -99,7 +99,7 @@ public class DishService {
         Dish dish = dishRepository.findById(dishId).orElse(null);
 
         if (dish == null) {
-            throw new EntityValidationException(
+            throw new EntityNotFoundException(
                     HttpStatus.NOT_FOUND,
                     "Dish with id=" + dishId + " not found");
         }
